@@ -1,8 +1,13 @@
 import pandas as pd
 import serial
+#Import the data
 df = pd.read_csv('Br1-3-2026-data.csv')
-#print(df)
+#Calculate the risk
+df['Flood Risk'] = df['Moisture']*3
+df['Storm Risk'] = df['Sound'] * df['Temp']/2
+print(df)
 
+"""
 #used for processing Embedded CSV file
 def get_alert(score):
     if score > 15:
@@ -45,5 +50,5 @@ while True:
     
     risk = check_flood_risk(x,z)
     print(f'risk-{risk}')
-        
+  """      
 
