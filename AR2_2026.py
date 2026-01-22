@@ -24,7 +24,7 @@ def get_alert(score):
 df['Alert'] = df['Flood Risk'].apply(get_alert)
 #1. Create a copy of DATA
 df_flood = df.copy()
-#2 Create a disaster conditions
+#2 Create a disaster conditions  Whatif Scenario1
 df_flood['Moisture'] = 100
 df_flood['Temp'] = 60
 
@@ -32,7 +32,7 @@ df_flood['Temp'] = 60
 df_flood['Flood Risk'] = df_flood['Moisture'] *2
 df_flood['Alert'] = df_flood['Flood Risk'].apply(get_alert)
 
-print("-----Scenario results -----")
+print("-----Whatif Scenario1 results -----")
 print(f"Average Non-Flood Risk: {df['Flood Risk'].mean():.2f}")
 print(f"Average Flood Risk: {df_flood['Flood Risk'].mean():.2f}")
 print("Number of Warnings :", df_flood[df_flood['Alert'] == "High Flood Risk"].shape[0])
