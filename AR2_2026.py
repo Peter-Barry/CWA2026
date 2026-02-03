@@ -11,34 +11,13 @@ import serial
 #Import the data
 df = pd.read_csv('Br1-3-2026-data.csv')
 #Calculate the risk
-df['Flood Risk'] = df['Moisture']*3
-df['Storm Risk'] = df['Sound'] * df['Temp']/2
+df['Flood Risk']  = df['Moisture']*3
+df['Storm Risk']  = df['Sound'] * df['Temp']/2
+df['Drought Risk'] = df['Moisture']-50 * df['Temp']
+
 print(df)
 
-
-def get_alert(score):
-    if score > 55:
-        return "High Flood Risk"
-    return "No Flood Risk- Safe"
-#apply the warning to every row
-df['Alert'] = df['Flood Risk'].apply(get_alert)
-#1. Create a copy of DATA
-df_flood = df.copy()
-#2 Create a disaster conditions  Whatif Scenario1
-df_flood['Moisture'] = 100
-df_flood['Temp'] = 60
-
-#Re-Run Storm Logic
-df_flood['Flood Risk'] = df_flood['Moisture'] *2
-df_flood['Alert'] = df_flood['Flood Risk'].apply(get_alert)
-
-print("-----Whatif Scenario1 results -----")
-print(f"Average Non-Flood Risk: {df['Flood Risk'].mean():.2f}")
-print(f"Average Flood Risk: {df_flood['Flood Risk'].mean():.2f}")
-print("Number of Warnings :", df_flood[df_flood['Alert'] == "High Flood Risk"].shape[0])
-
-"""
-#used for processing Embedded CSV file
+##used for processing Embedded CSV file
 def get_alert(score):
     if score > 15:
         return "High Flood Risk"
@@ -51,6 +30,45 @@ def check_flood_risk(x,z):
         return "High Flood Risk"
     return "No flood risk"
 
+def get_alert2(score):
+    if score < -900:
+        return "High Drought Risk"
+    return "No Drought Risk- Safe"
+
+#apply the warning to every row
+df['Alert'] = df['Flood Risk'].apply(get_alert)
+df['Alert2'] = df['Drought Risk'].apply(get_alert2)
+
+#print(df['Alert'])
+#1. Create a copy of DATA
+df_flood = df.copy()
+#2 Create a disaster conditions  Whatif Scenario1, flood risk
+df_flood['Moisture'] = 100
+df_flood['Temp'] = 60
+#3 Create a disater condiditon for WHATIF Scenario2, drought risk
+
+#Re-Run Storm Logic
+df_flood['Flood Risk'] = df_flood['Moisture'] *2
+df_flood['Alert'] = df_flood['Flood Risk'].apply(get_alert)
+df_flood['drought Risk'] = df_flood['Moisture'] -100
+df_flood['Alert2'] = df_flood['Drought Risk'].apply(get_alert2)
+
+
+#Scenario1,FLOOD RISK calculated by setting a moisture level of 100 and Temp of 60
+print("-----Whatif Scenario1 results ,-----")
+print(f"Average Non-Flood Risk: {df['Flood Risk'].mean():.2f}")
+print(f"Average Flood Risk: {df_flood['Flood Risk'].mean():.2f}")
+print("Number of Warnings :", df_flood[df_flood['Alert'] == "High Flood Risk"].shape[0])
+
+
+#Scenario2, Drought RISK , Moisture low and temp high
+print("-----Whatif Scenario2 results ,-----")
+print(f"Average Non-Drought Risk: {df['Drought Risk'].mean():.2f}")
+print(f"Average Drought Risk: {df_flood['Drought Risk'].mean():.2f}")
+print("Number of Warnings :", df_flood[df_flood['Alert2'] == "High Drought Risk"].shape[0])
+
+
+"""
 df['Flood_risk'] = df['Moisture'] * 5
 df['Alert'] = df['Flood_risk'].apply(get_alert)
 print(df['Alert'].value_counts())
